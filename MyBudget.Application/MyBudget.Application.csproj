@@ -26,7 +26,6 @@
     <Folder Include="Features\DebtTransactions\Queries\GetAll\" />
     <Folder Include="Features\DebtTransactions\Queries\GetById\" />
     <Folder Include="Features\DebtTransactions\Queries\GetPaged\" />
-    <Folder Include="Features\Transactions\Commands\AddEdit\" />
     <Folder Include="Features\Transactions\Commands\Delete\" />
     <Folder Include="Features\Transactions\Commands\Import\" />
     <Folder Include="Features\Transactions\Queries\Export\" />

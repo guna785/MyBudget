@@ -33,9 +33,9 @@ namespace MyBudget.Shared.Constants.Application
         }
         public static class Cache
         {
-            public const string GetAllBrandsCacheKey = "all-brands";
-            public const string GetAllDocumentTypesCacheKey = "all-document-types";
-            public const string GetAllOrganisationCacheKey = "all-organisation";
+            public const string GetAllAccountsCacheKey = "all-accounts";
+            public const string GetAllAssetsCacheKey = "all-assets";
+            public const string GetAllDebtsCacheKey = "all-debts";
         }
 
         public static class MimeTypes
