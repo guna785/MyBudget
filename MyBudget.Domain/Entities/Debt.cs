@@ -14,10 +14,15 @@ namespace MyBudget.Domain.Entities
         public double DebtAmount { get; set; }
         public DateTime DebtDate { get; set; }
         public double? Intrest { get; set; }
+        public int? Duration { get; set; }
         public double DebtAmountWithIntrest { get; set; }
         public DebtIntrestType IntrestType { get; set; }
-        public double ReturnedAmount { get; set; }
-        public double BalanceAmount { get; set; }
+        public bool IsEMI { get; set; }
+        public double EMIAmount { get; set; }
+        public int NoEMIs { get; set; }
+        public int PaidEMIs { get; set; }
+        public int RemainingEMIs { get; set; }
+        public int EMIDate { get; set; }
         public DebtStatus Status { get; set; }
         public int UserId { get; set; }
     }

@@ -10,5 +10,10 @@ namespace MyBudget.Application.Features.Accounts.Commands.AddEdit
 {
     public class AddEditAccountCommand : IRequest<Result<int>>
     {
+        public int Id { get; set; } = 0;
+        public string AccountName { get; set; }
+        public double InitialAmount { get; set; }
+        public string OverDraft { get; set; }
+        public int UserId { get; set; }
     }
 }

@@ -7,14 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Assets\Commands\AddEdit\" />
     <Folder Include="Features\Assets\Commands\Delete\" />
     <Folder Include="Features\Assets\Commands\Import\" />
     <Folder Include="Features\Assets\Queries\Export\" />
     <Folder Include="Features\Assets\Queries\GetAll\" />
     <Folder Include="Features\Assets\Queries\GetById\" />
     <Folder Include="Features\Assets\Queries\GetPaged\" />
-    <Folder Include="Features\Debts\Commands\AddEdit\" />
     <Folder Include="Features\Debts\Commands\Delete\" />
     <Folder Include="Features\Debts\Commands\Import\" />
     <Folder Include="Features\Debts\Queries\Export\" />
@@ -35,7 +33,6 @@
     <Folder Include="Features\Transactions\Queries\GetAll\" />
     <Folder Include="Features\Transactions\Queries\GetById\" />
     <Folder Include="Features\Transactions\Queries\GetPaged\" />
-    <Folder Include="Features\WishLists\Commands\AddEdit\" />
     <Folder Include="Features\WishLists\Commands\Delete\" />
     <Folder Include="Features\WishLists\Commands\Import\" />
     <Folder Include="Features\WishLists\Queries\Export\" />

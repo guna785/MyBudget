@@ -1,4 +1,5 @@
 using Hangfire;
+using Hangfire.MySql;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
@@ -10,6 +11,7 @@ using MyBudget.API.Middlewares;
 using MyBudget.Application.Extensions;
 using MyBudget.Infrastructure.Contexts;
 using MyBudget.Infrastructure.Extensions;
+using System.Transactions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,7 +36,19 @@ builder.Services.AddRepositories();
 builder.Services.AddSharedInfrastructure(builder.Configuration);
 builder.Services.RegisterSwagger();
 builder.Services.InfrastructureMappings();
-builder.Services.AddHangfire(x => x.UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddHangfire(x => x.UseStorage(new MySqlStorage(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        new MySqlStorageOptions
+        {
+            TransactionIsolationLevel = IsolationLevel.ReadCommitted,
+            QueuePollInterval = TimeSpan.FromSeconds(15),
+            JobExpirationCheckInterval = TimeSpan.FromHours(1),
+            CountersAggregateInterval = TimeSpan.FromMinutes(5),
+            PrepareSchemaIfNecessary = true,
+            DashboardJobListLimit = 50000,
+            TransactionTimeout = TimeSpan.FromMinutes(1),
+            TablesPrefix = "Hangfire"
+        })));
 builder.Services.AddHangfireServer();
 builder.Services.AddControllers().AddValidators();
 //services.AddRazorPages();
@@ -93,7 +107,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseHangfireDashboard("/jobs", new DashboardOptions
 {
-    DashboardTitle = localizer["BlazorHero Jobs"],
+    DashboardTitle = localizer["MyBudget Jobs"],
     Authorization = new[] { new HangfireAuthorizationFilter() }
 });
 app.UseEndpoints();

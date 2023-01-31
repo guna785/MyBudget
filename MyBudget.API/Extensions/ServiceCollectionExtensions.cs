@@ -210,7 +210,7 @@ namespace MyBudget.API.Extensions
         {
             return services
                         .AddDbContext<ApplicationDbContext>(options => options
-                            .UseSqlServer(configuration.GetConnectionString("DefaultConnection")))
+                            .UseMySQL(configuration.GetConnectionString("DefaultConnection")))
                     .AddTransient<IDatabaseSeeder, DatabaseSeeder>();
         }
 

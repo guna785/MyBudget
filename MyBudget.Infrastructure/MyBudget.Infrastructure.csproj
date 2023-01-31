@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
@@ -24,6 +24,7 @@
 		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="6.0.10" />
 		<PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.23.1" />
+		<PackageReference Include="MySql.EntityFrameworkCore" Version="6.0.10" />
 		<PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.23.1" />
 	</ItemGroup>
 	<ItemGroup>
