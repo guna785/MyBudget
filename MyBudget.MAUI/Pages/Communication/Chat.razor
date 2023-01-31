@@ -1,0 +1,337 @@
+﻿@page "/chat/{CId}"
+@page "/chat"
+@using System.Globalization
+@attribute [Authorize(Policy = MyBudget.Shared.Constants.Permission.Permissions.Communication.Chat)]
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Chat> _localizer
+
+<div class="d-flex flex-grow-1 flex-row">
+    <MudPaper Elevation="25" Class="py-4 flex-grow-1">
+        <MudToolBar Dense="true">
+
+            @if (string.IsNullOrEmpty(CFullName))
+            {
+                <MudIcon Icon="@Icons.Material.Outlined.Person" Style="margin-right:10px">  </MudIcon>
+                <MudText Typo="Typo.h6">@_localizer["chat"]</MudText>
+            }
+            else
+            {
+                <MudIcon Icon="@Icons.Material.Outlined.ChatBubble" Style="margin-right:10px">  </MudIcon>
+                <MudText Typo="Typo.h6">@CFullName</MudText>
+            }
+
+            <MudSpacer />
+            <MudHidden Breakpoint="Breakpoint.MdAndUp">
+                <MudIconButton OnClick="@(() => OpenDrawer(Anchor.Right))" Icon="@Icons.Material.Outlined.PeopleAlt" Color="Color.Inherit" Class="ml-3" />
+            </MudHidden>
+        </MudToolBar>
+        <div class="d-flex flex-column px-4" style="max-height:65vh;min-height:65vh; overflow:scroll;" id="chatContainer">
+            @foreach (var message in _messages)
+            {
+                <div class="d-flex flex-row my-4">
+                    <div class="mr-4">
+                        @if (string.IsNullOrEmpty(message.FromUserImageURL))
+                        {
+                            <MudAvatar Color="Color.Secondary" Style="height:50px; width:50px;">@message.FromUserFullName.ToUpper().FirstOrDefault()</MudAvatar>
+                        }
+                        else
+                        {
+                            <MudAvatar Image="@message.FromUserImageURL" Style="height:50px; width:50px;"> </MudAvatar>
+                        }
+                    </div>
+                    <div>
+                        <MudText Typo="Typo.body1">@message.FromUserFullName</MudText>
+                        <MudText Typo="Typo.caption" Style="font-size: xx-small!important;">@message.CreatedDate.ToString("G", CultureInfo.CurrentCulture)</MudText>
+                        <MudText Typo="Typo.body2" Style=" padding: 15px;border-radius: 5px;margin-top:5px">@message.Message</MudText>
+                    </div>
+                </div>
+            }
+        </div>
+        <MudPaper Elevation="25" Class="d-flex flex-row px-2 mx-4" Style="">
+            <MudTextField T="string" Placeholder="@_localizer["Enter your message..."]" @onkeypress="OnKeyPressInChat" DisableUnderLine="true" Class="mt-n2 mx-4"
+                          @bind-Value="CurrentMessage" For="@(()=> CurrentMessage)" />
+            <MudButton OnClick="SubmitAsync" StartIcon="@Icons.Material.Outlined.Send" Color="Color.Secondary" ButtonType="ButtonType.Button">@_localizer["Send"]</MudButton>
+        </MudPaper>
+    </MudPaper>
+    <MudHidden Breakpoint="Breakpoint.SmAndDown">
+        <MudPaper Elevation="25" Class="pa-3 ml-6" MinWidth="350px">
+            <MudToolBar Dense="true">
+                <MudText Typo="Typo.h6" Inline="true" Class="mr-2">#</MudText>
+                <MudText Typo="Typo.h6">@_localizer["contacts"]</MudText>
+            </MudToolBar>
+            <div class="d-flex flex-column px-4" style="max-height:70vh;min-height:70vh; overflow:scroll;">
+                <MudList Clickable="true">
+                    @foreach (var user in UserList)
+                    {
+                        <MudListItem Class="pa-0 px-2" OnClick="@(() => LoadUserChat(user.Id.ToString()))">
+                            <div class="d-flex flex-row mt-n1 mb-n1">
+                                <div class="mr-4">
+                                    <MudBadge Class="my-2" Color="@(GetUserStatusBadgeColor(user.IsOnline))" Overlap="true" Bottom="true" Dot="true">
+                                        @if (string.IsNullOrEmpty(user.ProfilePictureDataUrl))
+                                        {
+                                            @if (user.Id.ToString() == CId)
+                                            {
+                                                <MudAvatar Color="Color.Secondary" Style="height:50px; width:50px;">@user.UserName.ToUpper().FirstOrDefault()</MudAvatar>
+                                            }
+                                            else
+                                            {
+                                                <MudAvatar Color="Color.Dark" Style="height:50px; width:50px;">@user.UserName.ToUpper().FirstOrDefault()</MudAvatar>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <MudAvatar Image="@user.ProfilePictureDataUrl" Style="height:50px; width:50px;"> </MudAvatar>
+                                        }
+                                    </MudBadge>
+                                </div>
+                                <div>
+                                    <MudText Typo="Typo.body2" Class="mt-3 mb-n2">@user.FirstName @user.LastName</MudText>
+                                    <MudText Typo="Typo.caption" Style="font-size: xx-small!important;">@user.EmailAddress</MudText>
+                                </div>
+                            </div>
+                        </MudListItem>
+                    }
+                </MudList>
+            </div>
+        </MudPaper>
+    </MudHidden>
+</div>
+<MudDrawer @bind-Open="@_open" Anchor="@ChatDrawer" Elevation="1" Variant="@DrawerVariant.Temporary">
+    <div class="pa-3">
+        <MudList Clickable="true">
+            @foreach (var user in UserList)
+            {
+                <MudListItem Class="pa-0 px-2" OnClick="@(() => LoadUserChat(user.Id.ToString()))">
+                    <div class="d-flex flex-row mt-n1 mb-n1">
+                        <div class="mr-4">
+                            <MudBadge Class="my-2" Color="@(GetUserStatusBadgeColor(user.IsOnline))" Overlap="true" Bottom="true" Dot="true">
+                                @if (string.IsNullOrEmpty(user.ProfilePictureDataUrl))
+                                {
+                                    @if (user.Id.ToString() == CId)
+                                    {
+                                        <MudAvatar Color="Color.Secondary" Style="height: 50px; width: 50px;">@user.UserName.ToUpper().FirstOrDefault()</MudAvatar>
+                                    }
+                                    else
+                                    {
+                                        <MudAvatar Color="Color.Dark" Style="height: 50px; width: 50px;">@user.UserName.ToUpper().FirstOrDefault()</MudAvatar>
+                                    }
+                                }
+                                else
+                                {
+                                    <MudAvatar Image="@user.ProfilePictureDataUrl" Style="height: 50px; width: 50px;"> </MudAvatar>
+                                }
+                            </MudBadge>
+                        </div>
+                        <div>
+                            <MudText Typo="Typo.body2" Class="mt-3 mb-n2">@user.FirstName @user.LastName</MudText>
+                            <MudText Typo="Typo.caption" Style="font-size: xx-small!important;">@user.EmailAddress</MudText>
+                        </div>
+                    </div>
+                </MudListItem>
+            }
+        </MudList>
+    </div>
+</MudDrawer>
+<MudAlert Style="margin-top:10px;margin-bottom:20px" Severity="Severity.Success">@_localizer["Want to understand how Chat is implemented in BlazorHero ? Refer this"] <MudLink Href="https://codewithmukesh.com/blog/realtime-chat-application-with-blazor">@_localizer["detailed guide for more."]</MudLink></MudAlert>
+
+@code {
+    [Inject] private IChatManager ChatManager { get; set; }
+
+    [CascadingParameter] private HubConnection HubConnection { get; set; }
+    [Parameter] public string CurrentMessage { get; set; }
+    [Parameter] public int CurrentUserId { get; set; }
+    [Parameter] public string CurrentUserImageURL { get; set; }
+
+    private List<ChatHistoryResponse> _messages = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await _jsRuntime.InvokeAsync<string>("ScrollToBottom", "chatContainer");
+    }
+
+    private async Task SubmitAsync()
+    {
+        if (!string.IsNullOrEmpty(CurrentMessage))
+        {
+            //Save Message to DB
+            var chatHistory = new ChatHistory<IChatUser>
+                {
+                    Message = CurrentMessage,
+                    ToUserId = Convert.ToInt32(CId),
+                    CreatedDate = DateTime.Now
+                };
+            var response = await ChatManager.SaveMessageAsync(chatHistory);
+            if (response.Succeeded)
+            {
+                var state = await _stateProvider.GetAuthenticationStateAsync();
+                var user = state.User;
+                CurrentUserId = user.GetUserId();
+                chatHistory.FromUserId = CurrentUserId;
+                var userName = $"{user.GetFirstName()} {user.GetLastName()}";
+                await HubConnection.SendAsync(ApplicationConstants.SignalR.SendMessage, chatHistory, userName);
+                CurrentMessage = string.Empty;
+            }
+            else
+            {
+                foreach (var message in response.Messages)
+                {
+                    _snackBar.Add(message, Severity.Error);
+                }
+            }
+        }
+    }
+
+    private async Task OnKeyPressInChat(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await SubmitAsync();
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        HubConnection = HubConnection.TryInitialize(_navigationManager);
+        if (HubConnection.State == HubConnectionState.Disconnected)
+        {
+            await HubConnection.StartAsync();
+        }
+        HubConnection.On<string>(ApplicationConstants.SignalR.PingResponse, (userId) =>
+        {
+            var connectedUser = UserList.Find(x => x.Id.Equals(userId));
+            if (connectedUser is { IsOnline: false })
+            {
+                connectedUser.IsOnline = true;
+                //_snackBar.Add($"{connectedUser.UserName} {_localizer["Logged In."]}", Severity.Info);
+                StateHasChanged();
+            }
+        });
+        HubConnection.On<string>(ApplicationConstants.SignalR.ConnectUser, (userId) =>
+        {
+            var connectedUser = UserList.Find(x => x.Id.Equals(userId));
+            if (connectedUser is { IsOnline: false })
+            {
+                connectedUser.IsOnline = true;
+                _snackBar.Add($"{connectedUser.UserName} {_localizer["Logged In."]}", Severity.Info);
+                StateHasChanged();
+            }
+        });
+        HubConnection.On<string>(ApplicationConstants.SignalR.DisconnectUser, (userId) =>
+        {
+            var disconnectedUser = UserList.Find(x => x.Id.Equals(userId));
+            if (disconnectedUser is { IsOnline: true })
+            {
+                disconnectedUser.IsOnline = false;
+                _snackBar.Add($"{disconnectedUser.UserName} {_localizer["Logged Out."]}", Severity.Info);
+                StateHasChanged();
+            }
+        });
+        HubConnection.On<ChatHistory<IChatUser>, string>(ApplicationConstants.SignalR.ReceiveMessage, async (chatHistory, userName) =>
+         {
+             if ((CId == chatHistory.ToUserId.ToString() && CurrentUserId == chatHistory.FromUserId) || (CId == chatHistory.FromUserId.ToString() && CurrentUserId == chatHistory.ToUserId))
+             {
+                 if ((CId == chatHistory.ToUserId.ToString() && CurrentUserId == chatHistory.FromUserId))
+                 {
+                     _messages.Add(new ChatHistoryResponse { Message = chatHistory.Message, FromUserFullName = userName, CreatedDate = chatHistory.CreatedDate, FromUserImageURL = CurrentUserImageURL });
+                     await HubConnection.SendAsync(ApplicationConstants.SignalR.SendChatNotification, string.Format(_localizer["New Message From {0}"], userName), CId, CurrentUserId);
+                 }
+                 else if ((CId == chatHistory.FromUserId.ToString() && CurrentUserId == chatHistory.ToUserId))
+                 {
+                     _messages.Add(new ChatHistoryResponse { Message = chatHistory.Message, FromUserFullName = userName, CreatedDate = chatHistory.CreatedDate, FromUserImageURL = CImageURL });
+                 }
+                 await _jsRuntime.InvokeAsync<string>("ScrollToBottom", "chatContainer");
+                 StateHasChanged();
+             }
+         });
+        await GetUsersAsync();
+        var state = await _stateProvider.GetAuthenticationStateAsync();
+        var user = state.User;
+        CurrentUserId = user.GetUserId();
+        CurrentUserImageURL = await SecureStorage.GetAsync(StorageConstants.Local.UserImageURL);
+
+        await LoadUserChat(CId);
+
+        await HubConnection.SendAsync(ApplicationConstants.SignalR.PingRequest, CurrentUserId);
+    }
+
+    public List<ChatUserResponse> UserList = new();
+    [Parameter] public string CFullName { get; set; }
+    [Parameter] public string CId { get; set; }
+    [Parameter] public string CUserName { get; set; }
+    [Parameter] public string CImageURL { get; set; }
+
+    private async Task LoadUserChat(string userId)
+    {
+        _open = false;
+        if (!string.IsNullOrEmpty(userId))
+        {
+            var response = await _userManager.GetAsync(userId.ToString());
+            if (response.Succeeded)
+            {
+                var contact = response.Data;
+                CId = contact.Id.ToString();
+                CFullName = $"{contact.FirstName} {contact.LastName}";
+                CUserName = contact.UserName;
+                CImageURL = contact.ProfilePictureDataUrl;
+                _navigationManager.NavigateTo($"chat/{CId}");
+                //Load messages from db here
+                _messages = new List<ChatHistoryResponse>();
+                var historyResponse = await ChatManager.GetChatHistoryAsync(CId.ToString());
+                if (historyResponse.Succeeded)
+                {
+                    _messages = historyResponse.Data.ToList();
+                }
+                else
+                {
+                    foreach (var message in historyResponse.Messages)
+                    {
+                        _snackBar.Add(message, Severity.Error);
+                    }
+                }
+            }
+            else
+            {
+                foreach (var message in response.Messages)
+                {
+                    _snackBar.Add(message, Severity.Error);
+                }
+            }
+        }
+    }
+
+    private async Task GetUsersAsync()
+    {
+        //add get chat history from chat controller / manager
+        var response = await ChatManager.GetChatUsersAsync();
+        if (response.Succeeded)
+        {
+            UserList = response.Data.ToList();
+        }
+        else
+        {
+            foreach (var message in response.Messages)
+            {
+                _snackBar.Add(message, Severity.Error);
+            }
+        }
+    }
+
+    private bool _open;
+    private Anchor ChatDrawer { get; set; }
+
+    private void OpenDrawer(Anchor anchor)
+    {
+        ChatDrawer = anchor;
+        _open = true;
+    }
+
+    private Color GetUserStatusBadgeColor(bool isOnline)
+    {
+        switch (isOnline)
+        {
+            case false:
+                return Color.Error;
+            case true:
+                return Color.Success;
+        }
+    }
+}

@@ -1,0 +1,58 @@
+﻿@using System.Net.Http
+@using MyBudget.MAUI.Authentication
+@using System.Net.Http.Headers
+@using System.Text
+@using MyBudget.MAUI.Managers.Identity.Account
+@using MyBudget.MAUI.Managers.Identity.Authentication
+@using MyBudget.MAUI.Managers.Identity.Users
+@using MyBudget.MAUI.Managers.Interceptors
+@using MyBudget.MAUI.Managers.Preferences
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.JSInterop
+@using MyBudget.MAUI
+@using MyBudget.MAUI.Shared
+@using MyBudget.MAUI.Shared.Components
+@using MyBudget.MAUI.Shared.Dialogs
+@using MyBudget.MAUI.Pages.Authentication
+@using MyBudget.MAUI.Pages.Utilities
+@using MyBudget.MAUI.Managers.Audit
+@using MyBudget.MAUI.Managers.Communication
+@using MyBudget.MAUI.Managers.Dashboard
+@using MudBlazor
+@using MyBudget.UI.Infrastructure.Settings
+@using MyBudget.Shared.Constants.Application
+@using MyBudget.MAUI.Managers.Identity.Roles
+@using Microsoft.AspNetCore.SignalR.Client
+@using MyBudget.MAUI.Extensions
+@using MyBudget.Application.Requests
+@using MyBudget.Application.Requests.Identity
+@using MyBudget.Application.Responses.Audit
+@using MyBudget.Application.Responses.Identity
+@using MyBudget.Application.Models.Chat
+@using MyBudget.Application.Interfaces.Chat
+@using MyBudget.Shared.Wrapper
+@using Blazored.FluentValidation
+@using MyBudget.Shared.Constants.Storage
+@using System.Security.Claims
+
+
+@inject NavigationManager _navigationManager
+
+@attribute [Authorize]
+@inject IAuthenticationManager _authenticationManager
+@inject IAccountManager _accountManager
+@inject NavigationManager _navigationManager
+@inject DentalAuthenticationStateProvider _stateProvider
+@inject IAuthorizationService _authorizationService
+@inject ISnackbar _snackBar
+@inject IDialogService _dialogService
+@inject HttpClient _httpClient
+@inject IHttpInterceptorManager _interceptor
+@inject ClientPreferenceManager _clientPreferenceManager
+@inject IUserManager _userManager
+@inject IJSRuntime _jsRuntime

@@ -1,0 +1,263 @@
+﻿
+@inject Microsoft.Extensions.Localization.IStringLocalizer<MainLayout> _localizer
+
+<MudAppBar Elevation="25">
+    <MudIcon Icon="@CustomIcons.DentalWhite" Size="Size.Large" ViewBox="0 0 250 250" />
+    <MudText Typo="Typo.h6" Class="ml-4">Dental Manager</MudText>
+    <MudToolBar DisableGutters="true">
+        <MudIconButton Icon="@Icons.Material.Outlined.Menu" Color="Color.Inherit" OnClick="@((e) => DrawerToggle())" Class="ml-3" />
+    </MudToolBar>
+    <MudSpacer />
+    <MudHidden Breakpoint="Breakpoint.MdAndUp" Invert="true">
+       @* <MudButton DisableElevation Variant="Variant.Filled" Color="Color.Secondary" Link="https://www.buymeacoffee.com/codewithmukesh" Target="_blank" StartIcon="@Icons.Material.Filled.LocalDrink">@_localizer["Buy Me A Coffee"]</MudButton>*@
+        <MudDivider Vertical="true" FlexItem="true" DividerType="DividerType.Middle" Class="mx-4 my-5" />
+      @*  <MudMenu EndIcon="@Icons.Filled.KeyboardArrowDown" Label="@_localizer["Support"]" Color="Color.Inherit" Dense="true" Direction="Direction.Right" OffsetY="true">
+            <MudText Typo="Typo.body2" Class="px-4 py-2"><b>@_localizer["Community"]</b></MudText>
+            <MudMenuItem Link="https://www.facebook.com/codewithmukesh" Target="_blank">@_localizer["Facebook Page"]</MudMenuItem>
+            <MudMenuItem Link="https://www.linkedin.com/in/iammukeshm/" Target="_blank">LinkedIn</MudMenuItem>
+            <MudText Typo="Typo.body2" Class="px-4 py-2"><b>@_localizer["Resources"]</b></MudText>
+            <MudMenuItem Link="https://mudblazor.com/" Target="_blank">@_localizer["MudBlazor Documentation"]</MudMenuItem>
+            <MudMenuItem Link="https://codewithmukesh.com/blog/blazor-hero-quick-start-guide/" Target="_blank">@_localizer["Quick-Start Guide"]</MudMenuItem>
+        </MudMenu>*@
+        <LanguageSelector />
+      @*  <MudTooltip Text="@_localizer["Toggle right-to-left/left-to-right"]">
+            <MudIconButton Icon="@Icons.Material.Filled.FormatTextdirectionRToL" Color="Color.Inherit" OnClick="@((e) => RightToLeftToggle())" />
+        </MudTooltip>*@
+        <MudTooltip Text="@_localizer["Toggle Dark Mode"]">
+            <MudIconButton Icon="@Icons.Material.Filled.Brightness4" Color="Color.Inherit" OnClick="@((e) => ToggleDarkMode())" />
+        </MudTooltip>
+       @* <MudTooltip Text="@_localizer["Fork Repository"]">
+            <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/blazorhero/CleanArchitecture" Target="_blank" />
+        </MudTooltip>*@
+    </MudHidden>
+    <MudHidden Breakpoint="Breakpoint.SmAndDown" Invert="true">
+        <LanguageSelector />
+        <MudMenu Icon="@Icons.Filled.Settings" Color="Color.Inherit" Dense="true" Direction="Direction.Right" OffsetY="true">
+            <div class="px-2">
+                    <MudIconButton Icon="@Icons.Material.Filled.Brightness4" Color="Color.Inherit" OnClick="@((e) => ToggleDarkMode())" />
+                   @* <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/blazorhero/CleanArchitecture" Target="_blank" />*@
+            </div>
+          @*  <MudText Typo="Typo.body2" Class="px-4 py-2"><b>@_localizer["Community"]</b></MudText>
+            <MudMenuItem Link="https://www.facebook.com/codewithmukesh" Target="_blank">@_localizer["Facebook Page"]</MudMenuItem>
+            <MudMenuItem Link="https://www.linkedin.com/in/iammukeshm/" Target="_blank">LinkedIn</MudMenuItem>
+            <MudText Typo="Typo.body2" Class="px-4 py-2"><b>@_localizer["Resources"]</b></MudText>
+            <MudMenuItem Link="https://mudblazor.com/getting-started/installation" Target="_blank">@_localizer["MudBlazor Documentation"]</MudMenuItem>
+            <MudMenuItem Link="https://codewithmukesh.com/blog/blazor-hero-quick-start-guide/" Target="_blank">@_localizer["Quick-Start Guide"]</MudMenuItem>*@
+        </MudMenu>
+    </MudHidden>
+    <MudMenu Direction="_rightToLeft ? Direction.Right : Direction.Left" OffsetX="true" Dense="true" Class="mt-1 ml-4">
+        <ActivatorContent>
+            @if (string.IsNullOrEmpty(ImageDataUrl))
+            {
+                <MudAvatar Color="Color.Secondary">@FirstLetterOfName</MudAvatar>
+            }
+            else
+            {
+                <MudAvatar Image="@ImageDataUrl" Style="height:50px; width:50px;"> </MudAvatar>
+            }
+        </ActivatorContent>
+        <ChildContent>
+            <UserCard Class="mt-n2" />
+            <MudDivider Class="mb-2" />
+            <MudListItem Text="@_localizer["Account"]" Href="/account" Icon="@Icons.Material.Outlined.Person" />
+            <MudListItem Text="@_localizer["Logout"]" Icon="@Icons.Material.Filled.Logout" OnClick="Logout" />
+        </ChildContent>
+    </MudMenu>
+</MudAppBar>
+<MudDrawer @bind-Open="_drawerOpen" Elevation="25" ClipMode="DrawerClipMode.Always">
+    <NavMenu />
+</MudDrawer>
+<MudMainContent>
+    <MudContainer MaxWidth="MaxWidth.False" Class="mt-4">
+        <CascadingValue Value="hubConnection">
+            @ChildContent
+        </CascadingValue>
+    </MudContainer>
+</MudMainContent>
+@code{
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public EventCallback OnDarkModeToggle { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> OnRightToLeftToggle { get; set; }
+
+    private bool _drawerOpen = true;
+    [Inject] private IRoleManager RoleManager { get; set; }
+
+    private string CurrentUserId { get; set; }
+    private string ImageDataUrl { get; set; }
+    private string FirstName { get; set; }
+    private string SecondName { get; set; }
+    private string Email { get; set; }
+    private char FirstLetterOfName { get; set; }
+    private bool _rightToLeft = false;
+    private HubConnection hubConnection;
+    public bool IsConnected => hubConnection.State == HubConnectionState.Connected;
+    private async Task RightToLeftToggle()
+    {
+        var isRtl = await _clientPreferenceManager.ToggleLayoutDirection();
+        _rightToLeft = isRtl;
+
+        await OnRightToLeftToggle.InvokeAsync(isRtl);
+    }
+
+    public async Task ToggleDarkMode()
+    {
+        await OnDarkModeToggle.InvokeAsync();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _rightToLeft = await _clientPreferenceManager.IsRTL();
+        _interceptor.RegisterEvent();
+        hubConnection = hubConnection.TryInitialize(_navigationManager);
+        await hubConnection.StartAsync();
+        hubConnection.On<string, string, string>(ApplicationConstants.SignalR.ReceiveChatNotification, (message, receiverUserId, senderUserId) =>
+        {
+            if (CurrentUserId == receiverUserId)
+            {
+                _jsRuntime.InvokeAsync<string>("PlayAudio", "notification");
+                _snackBar.Add(message, Severity.Info, config =>
+                {
+                    config.VisibleStateDuration = 10000;
+                    config.HideTransitionDuration = 500;
+                    config.ShowTransitionDuration = 500;
+                    config.Action = _localizer["Chat?"];
+                    config.ActionColor = Color.Primary;
+                    config.Onclick = snackbar =>
+                    {
+                        _navigationManager.NavigateTo($"chat/{senderUserId}");
+                        return Task.CompletedTask;
+                    };
+                });
+            }
+        });
+        hubConnection.On(ApplicationConstants.SignalR.ReceiveRegenerateTokens, async () =>
+        {
+            try
+            {
+                var token = await _authenticationManager.TryForceRefreshToken();
+                if (!string.IsNullOrEmpty(token))
+                {
+                    _snackBar.Add(_localizer["Refreshed Token."], Severity.Success);
+                    _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                _snackBar.Add(_localizer["You are Logged Out."], Severity.Error);
+                await _authenticationManager.Logout();
+                _navigationManager.NavigateTo("/");
+            }
+        });
+        hubConnection.On<string, string>(ApplicationConstants.SignalR.LogoutUsersByRole, async (userId, roleId) =>
+        {
+            if (CurrentUserId != userId)
+            {
+                var rolesResponse = await RoleManager.GetRolesAsync();
+                if (rolesResponse.Succeeded)
+                {
+                    var role = rolesResponse.Data.FirstOrDefault(x => x.Id == Convert.ToInt32( roleId));
+                    if (role != null)
+                    {
+                        var currentUserRolesResponse = await _userManager.GetRolesAsync(CurrentUserId);
+                        if (currentUserRolesResponse.Succeeded && currentUserRolesResponse.Data.UserRoles.Any(x => x.RoleName == role.Name))
+                        {
+                            _snackBar.Add(_localizer["You are logged out because the Permissions of one of your Roles have been updated."], Severity.Error);
+                            await hubConnection.SendAsync(ApplicationConstants.SignalR.OnDisconnect, CurrentUserId);
+                            await _authenticationManager.Logout();
+                            _navigationManager.NavigateTo("/login");
+                        }
+                    }
+                }
+            }
+        });
+        hubConnection.On<string>(ApplicationConstants.SignalR.PingRequest, async (userName) =>
+        {
+            await hubConnection.SendAsync(ApplicationConstants.SignalR.PingResponse, CurrentUserId, userName);
+
+        });
+
+        await hubConnection.SendAsync(ApplicationConstants.SignalR.OnConnect, CurrentUserId);
+
+        _snackBar.Add(string.Format(_localizer["Welcome {0}"], FirstName), Severity.Success);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadDataAsync();
+        }
+    }
+    private void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+    private async Task LoadDataAsync()
+    {
+        var state = await _stateProvider.GetAuthenticationStateAsync();
+        var user = state.User;
+        if (user == null) return;
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            if (string.IsNullOrEmpty(CurrentUserId))
+            {
+                CurrentUserId = user.GetUserId().ToString();
+                FirstName = user.GetFirstName();
+                if (FirstName.Length > 0)
+                {
+                    FirstLetterOfName = FirstName[0];
+                }
+
+                SecondName = user.GetLastName();
+                Email = user.GetEmail();
+                var imageResponse = await _accountManager.GetProfilePictureAsync(CurrentUserId);
+                if (imageResponse.Succeeded)
+                {
+                    var format = "image/png";
+                    ImageDataUrl = $"data:{format};base64,{imageResponse.Data}";
+                }
+
+                var currentUserResult = await _userManager.GetAsync(CurrentUserId);
+                if (!currentUserResult.Succeeded || currentUserResult.Data == null)
+                {
+                    _snackBar.Add(
+                        _localizer["You are logged out because the user with your Token has been deleted."],
+                        Severity.Error);
+                    CurrentUserId = string.Empty;
+                    ImageDataUrl = string.Empty;
+                    FirstName = string.Empty;
+                    SecondName = string.Empty;
+                    Email = string.Empty;
+                    FirstLetterOfName = char.MinValue;
+                    await _authenticationManager.Logout();
+                }
+            }
+        }
+    }
+
+    
+
+    private void Logout()
+    {
+        var parameters = new DialogParameters
+            {
+                {nameof(Dialogs.Logout.ContentText), $"{_localizer["Logout Confirmation"]}"},
+                {nameof(Dialogs.Logout.ButtonText), $"{_localizer["Logout"]}"},
+                {nameof(Dialogs.Logout.Color), Color.Error},
+                {nameof(Dialogs.Logout.CurrentUserId), CurrentUserId},
+                {nameof(Dialogs.Logout.HubConnection), hubConnection}
+            };
+
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true };
+
+        _dialogService.Show<Dialogs.Logout>(_localizer["Logout"], parameters, options);
+    }
+
+    
+}

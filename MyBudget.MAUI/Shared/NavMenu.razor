@@ -1,0 +1,79 @@
+﻿@inject Microsoft.Extensions.Localization.IStringLocalizer<NavMenu> _localizer
+@using System.Security.Claims
+
+<UserCard />
+<MudNavMenu>
+    <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Home">@_localizer["Home"]</MudNavLink>
+    @* @if (_canViewHangfire)
+    {
+    <MudNavLink Href="/jobs" Target="_blank" Icon="@Icons.Material.Outlined.Work">
+    @_localizer["Hangfire"]
+    </MudNavLink>
+    }   *@
+    <MudListSubheader Class="mt-2 mb-n2">@_localizer["Personal"]</MudListSubheader>
+    @if (_canViewDashboards)
+    {
+        <MudNavLink Href="/dashboard" Icon="@Icons.Material.Outlined.Dashboard">
+            @_localizer["Dashboard"]
+        </MudNavLink>
+    }
+   
+    <MudNavLink Href="/account" Icon="@Icons.Material.Outlined.AccountCircle">
+        @_localizer["Account"]
+    </MudNavLink>
+
+
+
+    @if (_canViewUsers || _canViewRoles)
+    {
+        <MudNavGroup Icon="@Icons.Material.Outlined.AdminPanelSettings" Title="@_localizer["Administrator"]" Expanded="false">
+            @if (_canViewUsers)
+            {
+                <MudNavLink Href="/identity/users" Icon="@Icons.Material.Outlined.Person">
+                    @_localizer["Users"]
+                </MudNavLink>
+            }
+            @if (_canViewRoles)
+            {
+                <MudNavLink Href="/identity/roles" Icon="@Icons.Material.Outlined.Person">@_localizer["Roles"]</MudNavLink>
+            }
+        </MudNavGroup>
+    }
+
+    @if (_canViewChat)
+    {
+        <MudNavGroup Icon="@Icons.Material.Outlined.Hub" Title="@_localizer["Communication"]" Expanded="false">
+            <MudNavLink Href="/chat" Icon="@Icons.Material.Outlined.Chat">
+                @_localizer["Chat"]
+            </MudNavLink>
+        </MudNavGroup>
+    }
+    @if (_canViewAuditTrails)
+    {
+        <MudNavLink Href="/audit-trails" Icon="@Icons.Material.Outlined.Security">
+            @_localizer["Audit Trails"]
+        </MudNavLink>
+    }
+</MudNavMenu>
+
+@code {
+    private ClaimsPrincipal _authenticationStateProviderUser;
+
+    private bool _canViewHangfire;
+    private bool _canViewDashboards;
+    private bool _canViewAuditTrails;
+    private bool _canViewRoles;
+    private bool _canViewUsers;
+    private bool _canViewChat;
+    protected override async Task OnParametersSetAsync()
+    {
+        _authenticationStateProviderUser = await _stateProvider.GetAuthenticationStateProviderUserAsync();
+        _canViewHangfire = (await _authorizationService.AuthorizeAsync(_authenticationStateProviderUser, MyBudget.Shared.Constants.Permission.Permissions.Hangfire.View)).Succeeded;
+        _canViewDashboards = (await _authorizationService.AuthorizeAsync(_authenticationStateProviderUser, MyBudget.Shared.Constants.Permission.Permissions.Dashboards.View)).Succeeded;
+        _canViewAuditTrails = (await _authorizationService.AuthorizeAsync(_authenticationStateProviderUser, MyBudget.Shared.Constants.Permission.Permissions.AuditTrails.View)).Succeeded;
+        _canViewRoles = (await _authorizationService.AuthorizeAsync(_authenticationStateProviderUser, MyBudget.Shared.Constants.Permission.Permissions.Roles.View)).Succeeded;
+        _canViewUsers = (await _authorizationService.AuthorizeAsync(_authenticationStateProviderUser, MyBudget.Shared.Constants.Permission.Permissions.Users.View)).Succeeded;
+        _canViewChat = (await _authorizationService.AuthorizeAsync(_authenticationStateProviderUser, MyBudget.Shared.Constants.Permission.Permissions.Communication.Chat)).Succeeded;
+      
+    }
+}
