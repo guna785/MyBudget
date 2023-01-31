@@ -4,6 +4,7 @@ using MyBudget.Infrastructure.Models.Identity;
 using MyBudget.Application.Interfaces.Services;
 using MyBudget.Application.Models.Chat;
 using MyBudget.Domain.Contract;
+using MyBudget.Domain.Entities;
 
 namespace MyBudget.Infrastructure.Contexts
 {
@@ -20,7 +21,12 @@ namespace MyBudget.Infrastructure.Contexts
         }
 
         public DbSet<ChatHistory<ApplicationUser>> ChatHistories { get; set; }
-
+        public DbSet<Account> Accounts { get; set; }    
+        public DbSet<Transactions> Transactions { get; set; }
+        public DbSet<WishList> WishLists { get; set; }
+        public DbSet<Assets> Assets { get; set; }
+        public DbSet<Debt> Debts { get; set; }
+        public DbSet<DebtTransaction> DebtTransactions { get; set; }
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
         {
             foreach (Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<IAuditableEntity>? entry in ChangeTracker.Entries<IAuditableEntity>().ToList())
