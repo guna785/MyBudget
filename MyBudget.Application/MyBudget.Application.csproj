@@ -7,12 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Accounts\Commands\Import\" />
-    <Folder Include="Features\Accounts\Commands\Delete\" />
-    <Folder Include="Features\Accounts\Queries\GetPaged\" />
-    <Folder Include="Features\Accounts\Queries\GetAll\" />
-    <Folder Include="Features\Accounts\Queries\GetById\" />
-    <Folder Include="Features\Accounts\Queries\Export\" />
     <Folder Include="Features\Assets\Commands\AddEdit\" />
     <Folder Include="Features\Assets\Commands\Delete\" />
     <Folder Include="Features\Assets\Commands\Import\" />
