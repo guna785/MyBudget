@@ -77,7 +77,7 @@ namespace MyBudget.MAUI.Extensions
                     .CreateClient(ClientName).EnableIntercept(sp))
                 .AddHttpClient(ClientName, client =>
                 {
-                    client.DefaultRequestHeaders.AcceptLanguage.Clear();
+                    client.DefaultRequestHeaders.AcceptLanguage.Clear();                    
                     client.DefaultRequestHeaders.AcceptLanguage.ParseAdd(CultureInfo.DefaultThreadCurrentCulture?.TwoLetterISOLanguageName);
                     client.BaseAddress = new Uri("https://localhost:7172/");
                 })

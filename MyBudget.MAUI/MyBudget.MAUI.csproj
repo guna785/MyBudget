@@ -50,6 +50,16 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Content Remove="appsettings.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="appsettings.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
       <None Include="Shared\MainLayout.razor" />
       <None Include="Shared\NavMenu.razor" />
       <None Include="Shared\SurveyPrompt.razor" />

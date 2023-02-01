@@ -15,6 +15,7 @@ namespace MyBudget.Domain.Entities
         public int UserId { get; set; }
         public int CategoryId { get; set; }
         public double Amount { get; set; }
+        public double Balance { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
 
