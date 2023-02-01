@@ -5,6 +5,7 @@ using MyBudget.Application.Interfaces.Repositories;
 using MyBudget.Application.Interfaces.Services;
 using MyBudget.Application.Requests;
 using MyBudget.Domain.Entities;
+using MyBudget.Domain.Enums;
 using MyBudget.Shared.Constants.Application;
 using MyBudget.Shared.Wrapper;
 using System;
@@ -18,9 +19,9 @@ namespace MyBudget.Application.Features.Accounts.Commands.AddEdit
     public class AddEditAccountCommand : IRequest<Result<int>>
     {
         public int Id { get; set; } = 0;
-        public string AccountName { get; set; }
-        public double InitialAmount { get; set; }
-        public string OverDraft { get; set; }
+        public string Name { get; set; }
+        public AccountTypeData AccountType { get; set; }
+        public double Amount { get; set; }
         public int UserId { get; set; }
     }
     internal class AddEditAccountCommandHandler : IRequestHandler<AddEditAccountCommand, Result<int>>
@@ -54,9 +55,9 @@ namespace MyBudget.Application.Features.Accounts.Commands.AddEdit
                 Account org = await _unitOfWork.Repository<Account>().GetByIdAsync(command.Id);
                 if (org != null)
                 {
-                    org.AccountName = command.AccountName ?? org.AccountName;
-                    org.InitialAmount = command.InitialAmount;
-                    org.OverDraft = command.OverDraft ?? org.OverDraft;
+                    org.Name = command.Name ?? org.Name;
+                    org.AccountType = command.AccountType;
+                    org.Amount = command.Amount;
                     org.UserId= command.UserId;
 
                     await _unitOfWork.Repository<Account>().UpdateAsync(org);

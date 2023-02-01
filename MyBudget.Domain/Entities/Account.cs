@@ -1,4 +1,5 @@
 ﻿using MyBudget.Domain.Contract;
+using MyBudget.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +10,10 @@ namespace MyBudget.Domain.Entities
 {
     public class Account : AuditableEntity<int>
     {
-        public string AccountName { get; set; }
-        public double InitialAmount { get; set; }
-        public string OverDraft { get; set; }
+        public string Name { get; set; }
+        public AccountTypeData AccountType { get; set; }
+        public double Amount { get; set; }
         public int UserId { get; set; }
-        public virtual ICollection<Transactions> Transactions { get; set; }
+        public virtual ICollection<Transaction> Transactions { get; set; }
     }
 }

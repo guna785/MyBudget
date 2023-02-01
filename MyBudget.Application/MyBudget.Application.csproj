@@ -7,37 +7,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Assets\Commands\Delete\" />
-    <Folder Include="Features\Assets\Commands\Import\" />
-    <Folder Include="Features\Assets\Queries\Export\" />
-    <Folder Include="Features\Assets\Queries\GetAll\" />
-    <Folder Include="Features\Assets\Queries\GetById\" />
-    <Folder Include="Features\Assets\Queries\GetPaged\" />
-    <Folder Include="Features\Debts\Commands\Delete\" />
-    <Folder Include="Features\Debts\Commands\Import\" />
-    <Folder Include="Features\Debts\Queries\Export\" />
-    <Folder Include="Features\Debts\Queries\GetAll\" />
-    <Folder Include="Features\Debts\Queries\GetById\" />
-    <Folder Include="Features\Debts\Queries\GetPaged\" />
-    <Folder Include="Features\DebtTransactions\Commands\AddEdit\" />
-    <Folder Include="Features\DebtTransactions\Commands\Delete\" />
-    <Folder Include="Features\DebtTransactions\Commands\Import\" />
-    <Folder Include="Features\DebtTransactions\Queries\Export\" />
-    <Folder Include="Features\DebtTransactions\Queries\GetAll\" />
-    <Folder Include="Features\DebtTransactions\Queries\GetById\" />
-    <Folder Include="Features\DebtTransactions\Queries\GetPaged\" />
-    <Folder Include="Features\Transactions\Commands\Delete\" />
-    <Folder Include="Features\Transactions\Commands\Import\" />
-    <Folder Include="Features\Transactions\Queries\Export\" />
-    <Folder Include="Features\Transactions\Queries\GetAll\" />
-    <Folder Include="Features\Transactions\Queries\GetById\" />
-    <Folder Include="Features\Transactions\Queries\GetPaged\" />
-    <Folder Include="Features\WishLists\Commands\Delete\" />
-    <Folder Include="Features\WishLists\Commands\Import\" />
-    <Folder Include="Features\WishLists\Queries\Export\" />
-    <Folder Include="Features\WishLists\Queries\GetAll\" />
-    <Folder Include="Features\WishLists\Queries\GetById\" />
-    <Folder Include="Features\WishLists\Queries\GetPaged\" />
+    <Compile Remove="Features\Assets\**" />
+    <Compile Remove="Features\Debts\**" />
+    <Compile Remove="Features\Transactions\**" />
+    <Compile Remove="Features\WishLists\**" />
+    <EmbeddedResource Remove="Features\Assets\**" />
+    <EmbeddedResource Remove="Features\Debts\**" />
+    <EmbeddedResource Remove="Features\Transactions\**" />
+    <EmbeddedResource Remove="Features\WishLists\**" />
+    <None Remove="Features\Assets\**" />
+    <None Remove="Features\Debts\**" />
+    <None Remove="Features\Transactions\**" />
+    <None Remove="Features\WishLists\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Mappers\" />
     <Folder Include="Validators\Features\" />
   </ItemGroup>

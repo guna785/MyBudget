@@ -8,6 +8,7 @@ using MyBudget.Application.Interfaces.Repositories;
 using MyBudget.Application.Interfaces.Services;
 using MyBudget.Application.Requests;
 using MyBudget.Domain.Entities;
+using MyBudget.Domain.Enums;
 using MyBudget.Shared.Constants.Application;
 using MyBudget.Shared.Wrapper;
 using System;
@@ -55,10 +56,10 @@ namespace MyBudget.Application.Features.Accounts.Commands.Import
             MemoryStream stream = new(request.UploadRequest.Data);
             IResult<IEnumerable<Account>> result = await _excelService.ImportAsync(stream, mappers: new Dictionary<string, Func<DataRow, Account, object>>
             {
-                { _localizer["AccountName"], (row,item) => item.AccountName = row[_localizer["AccountName"]].ToString() },
-                { _localizer["InitialAmount"], (row,item) => item.InitialAmount =double.Parse( row[_localizer["InitialAmount"]].ToString()) },
-                 { _localizer["OverDraft"], (row,item) => item.OverDraft = row[_localizer["OverDraft"]].ToString() },
-                 
+                { _localizer["Name"], (row,item) => item.Name = row[_localizer["Name"]].ToString() },
+                { _localizer["AccountType"], (row,item) => item.AccountType = (AccountTypeData)Enum.Parse(typeof(AccountTypeData), ( row[_localizer["AccountType"]].ToString())) },
+                 { _localizer["Amount"], (row,item) => item.Amount =double.Parse( row[_localizer["Amount"]].ToString() )},
+
             }, _localizer["Accounts"]);
 
             if (result.Succeeded)
@@ -77,7 +78,7 @@ namespace MyBudget.Application.Features.Accounts.Commands.Import
                     else
                     {
                         errorsOccurred = true;
-                        errors.AddRange(validationResult.Errors.Select(e => $"{(!string.IsNullOrWhiteSpace(brand.AccountName) ? $"{brand.AccountName} - " : string.Empty)}{e.ErrorMessage}"));
+                        errors.AddRange(validationResult.Errors.Select(e => $"{(!string.IsNullOrWhiteSpace(brand.Name) ? $"{brand.Name} - " : string.Empty)}{e.ErrorMessage}"));
                     }
                 }
                 _ = await _unitOfWork.CommitAndRemoveCache(cancellationToken, ApplicationConstants.Cache.GetAllAccountsCacheKey);

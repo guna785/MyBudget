@@ -51,9 +51,9 @@ namespace MyBudget.Application.Features.Accounts.Queries.GetPaged
                 {
                     Id = e.Id,
                     UserId = e.UserId,
-                    AccountName = e.AccountName,
-                    OverDraft = e.OverDraft,
-                    InitialAmount = e.InitialAmount,
+                    AccountType = e.AccountType,
+                    Amount = e.Amount,
+                    Name = e.Name,
                     CreatedTime = e.CreatedOn ?? DateTime.Now
                 };
                 AccountFilterSpecification AccountFilterSpec = new(request.SearchString);

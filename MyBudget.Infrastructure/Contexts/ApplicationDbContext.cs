@@ -22,11 +22,10 @@ namespace MyBudget.Infrastructure.Contexts
 
         public DbSet<ChatHistory<ApplicationUser>> ChatHistories { get; set; }
         public DbSet<Account> Accounts { get; set; }    
-        public DbSet<Transactions> Transactions { get; set; }
-        public DbSet<WishList> WishLists { get; set; }
-        public DbSet<Assets> Assets { get; set; }
-        public DbSet<Debt> Debts { get; set; }
-        public DbSet<DebtTransaction> DebtTransactions { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<Budget> Budgets { get; set; }
+        public DbSet<Category> Categories { get; set; }
+       
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
         {
             foreach (Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<IAuditableEntity>? entry in ChangeTracker.Entries<IAuditableEntity>().ToList())

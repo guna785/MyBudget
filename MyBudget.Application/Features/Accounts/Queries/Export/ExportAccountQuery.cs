@@ -53,9 +53,9 @@ namespace MyBudget.Application.Features.Accounts.Queries.Export
                 string data = await _excelService.ExportAsync(brands, mappers: new Dictionary<string, Func<Account, object>>
             {
                 { _localizer["Id"], item => item.Id },
-                { _localizer["AccountName"], item => item.AccountName },
-                { _localizer["InitialAmount"], item => item.InitialAmount },
-                { _localizer["OverDraft"], item => item.OverDraft },
+                { _localizer["Name"], item => item.Name },
+                { _localizer["Amount"], item => item.Amount },
+                { _localizer["AccountType"], item => item.AccountType },
                 { _localizer["UserId"], item => item.UserId }
             }, sheetName: _localizer["Accountes"]);
 

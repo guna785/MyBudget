@@ -12,8 +12,7 @@ namespace MyBudget.Application.Specifications.Features.Accounts
     {
         public AccountFilterSpecification(string searchString)
         {
-            Criteria = !string.IsNullOrEmpty(searchString) ? (x => x.AccountName.ToLower().Contains(searchString.ToLower()) ||
-                     x.OverDraft.ToLower().Contains(searchString.ToLower())) : (x => true);
+            Criteria = !string.IsNullOrEmpty(searchString) ? (x => x.Name.ToLower().Contains(searchString.ToLower())) : (x => true);
         }
     }
 }
